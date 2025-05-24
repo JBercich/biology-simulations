@@ -5,8 +5,7 @@ from dataclasses import dataclass
 
 import numpy as np
 import polars as pl
-
-from biosimpy.seir.models import SEIR, Strain, Infection, Environment
+from biosimpy.epidemiology.models import SEIR, Environment, Infection, Strain
 
 
 @dataclass
@@ -120,6 +119,9 @@ class SEIRSimulation:
 		)
 
 
+import time
+
+t0 = time.time()
 result: pl.DataFrame = SEIRSimulation(
 	Environment(0.1, 0.1, 1000.0),
 	SEIR(
@@ -130,6 +132,7 @@ result: pl.DataFrame = SEIRSimulation(
 		1000.0,
 		1000.0,
 	),
-).run(100, 0.1)
+).run(100000, 0.1)
 
 print(result)
+print(time.time() - t0)

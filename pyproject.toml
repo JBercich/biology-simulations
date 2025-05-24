@@ -1,26 +1,28 @@
 [tool.poetry]
-name = "biosimpy"
-version = "0.1.0"
-description = "Experimenting with various different computer simulations in biology."
+name = "biology-simulations"
+version = "0.0.0"
+description = "Biology computer simulations."
 authors = ["Josh Bercich <joshbercich@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-numpy = "^1.26.4"
-polars = "^0.20.18"
-polars-lts-cpu = "^0.20.18"
+python = "==3.13.0"
+numpy = "^2.2.6"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^4.2.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
+src = ["src"]
 line-length = 89
 indent-width = 4
-target-version = "py311"
-extend-include = ["*.ipynb"]
+target-version = "py313"
 
 [tool.ruff.format]
 indent-style = "tab"
 docstring-code-format = true
+skip-magic-trailing-comma = true
