@@ -21,7 +21,6 @@ src = ["src"]
 line-length = 89
 indent-width = 4
 target-version = "py313"
-extend-include = ["*.ipynb"]
 
 [tool.ruff.format]
 indent-style = "tab"
