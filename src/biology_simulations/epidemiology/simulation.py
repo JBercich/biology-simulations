@@ -5,7 +5,6 @@ from dataclasses import dataclass
 
 import numpy as np
 import polars as pl
-
 from biosimpy.epidemiology.models import SEIR, Environment, Infection, Strain
 
 
