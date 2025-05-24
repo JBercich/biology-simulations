@@ -3,12 +3,12 @@
 
 
 class GraphException(Exception):
-    pass
+	pass
 
 
 class DependencyConflictException(GraphException):
-    def __init__(self, name: str):
-        self.name: str = name
+	def __init__(self, name: str):
+		self.name: str = name
 
-    def __str__(self) -> str:
-        return f"Variable already registered dependency: '{self.name}'"
+	def __str__(self) -> str:
+		return f"Variable already registered dependency: '{self.name}'"
