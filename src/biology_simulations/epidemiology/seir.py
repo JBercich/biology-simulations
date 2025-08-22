@@ -1,40 +1,31 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
+import logging
+from dataclasses import dataclass
+
+
 from pydantic import BaseModel, ConfigDict
 import pandas as pd
 import numpy as np
 
-from biology_simulations.models import default_model_config
 
-
-class SEIRInfection(BaseModel):
-	"""
-	TODO
-	"""
-
-	model_config = ConfigDict(title="SEIR Infection", **default_model_config)
-
-	name: str
-	"""
-	TODO
-	"""
-	number_of_infected: float
-	"""
-	Number of infected
-	"""
+@dataclass
+class Infection:
+	num_infected: float
 	infection_rate: float
-	"""
-	Infection rate
-	"""
 	virulence_rate: float
-	"""
-	Virulence
-	"""
 	recovery_rate: float
-	"""
-	Recovery rate
-	"""
+
+	def __post_init__(self) -> None:
+		if self.num_infected < 0:
+			raise ValueError("Infection cannot have negative num_infected.")
+		if self.infection_rate < 0:
+			raise ValueError("Infection cannot have negative infection_rate.")
+		if self.virulence_rate < 0:
+			raise ValueError("Infection cannot have negative virulence_rate.")
+		if self.recovery_rate < 0:
+			raise ValueError("Infection cannot have negative recovery_rate.")
 
 
 class SEIR(BaseModel):
@@ -74,7 +65,7 @@ class SEIR(BaseModel):
 	"""
 	Number of susceptible.
 	"""
-	infections: list[SEIRInfection]
+	infections: list[Infection]
 	"""
 	Infection list.
 	"""
@@ -97,17 +88,6 @@ class SEIR(BaseModel):
 
 	@staticmethod
 	def dRdt(death_rate, R, gamma, I):
-		"""
-		Docstring for dRdt
-
-		:param death_rate: Description
-		:param R: Description
-		:param gamma: Description
-		:param I: Description
-		:return: Description
-		:rtype: Any
-		"""
-
 		return -death_rate * R + np.sum(gamma * I)
 
 	def simulation(self):
@@ -181,13 +161,13 @@ class SEIR(BaseModel):
 
 
 infections = [
-	SEIRInfection(
-		name="",
-		number_of_infected=100e3,
-		infection_rate=0.2,
-		virulence_rate=0.091,
-		recovery_rate=0.0001,
-	)
+	# Infection(
+	# 	name="",
+	# 	number_of_infected=100e3,
+	# 	infection_rate=0.2,
+	# 	virulence_rate=0.091,
+	# 	recovery_rate=0.0001,
+	# )
 ]
 number_of_recovered = 0.2 / (0.091 + 0.0001 + 0.011)
 df1 = SEIR(
@@ -203,63 +183,22 @@ df1 = SEIR(
 	number_of_recovered=number_of_recovered,
 ).simulation()
 
-infections: list[SEIRInfection] = [
-	SEIRInfection(
-		name="",
-		number_of_infected=100e3,
-		infection_rate=0.2,
-		virulence_rate=0.091,
-		recovery_rate=0.0001,
-	),
-	SEIRInfection(
-		name="",
-		number_of_infected=1.0,
-		infection_rate=0.2,
-		virulence_rate=0.069,
-		recovery_rate=0.0022,
-	),
-	SEIRInfection(
-		name="",
-		number_of_infected=1.0,
-		infection_rate=0.2,
-		virulence_rate=0.051,
-		recovery_rate=0.0042,
-	),
-	SEIRInfection(
-		name="",
-		number_of_infected=1.0,
-		infection_rate=0.2,
-		virulence_rate=0.039,
-		recovery_rate=0.01,
-	),
-	SEIRInfection(
-		name="",
-		number_of_infected=1.0,
-		infection_rate=0.2,
-		virulence_rate=0.025,
-		recovery_rate=0.0169,
-	),
-	SEIRInfection(
-		name="",
-		number_of_infected=1.0,
-		infection_rate=0.2,
-		virulence_rate=0.008,
-		recovery_rate=0.0301,
-	),
-]
 
-betas = np.array([i.infection_rate for i in infections])
-alphas = np.array([i.virulence_rate for i in infections])
-gammas = np.array([i.recovery_rate for i in infections])
-
-number_of_recovered = np.sum(betas / (alphas + gammas + 0.011))
-# df2 = SEIR(
-# 	a=0.03,
-# 	b=0.011,
-# 	N=365.0,
-# 	K=200e6,
-# 	dt=1.0,
-# 	S0=200e6 - np.sum([x.n for x in infections]) - R0,
-# 	I0=infections,
-# 	R0=R0,
-# ).simulation()
+def run_seir_simulation(
+	birth_rate: float,
+	death_rate: float,
+	max_population: int,
+	num_days: float,
+	time_step: float,
+	num_susceptible: int,
+	num_recovered: int,
+	infections: list[tuple[float, float, float]],
+) -> None:
+	logging.info("Starting up seir simulation runtime")
+	logging.debug("Validating simulation parameters and building environment")
+	infections = [Infection(*x) for x in infections]
+	logging.debug("Validating simulation artifact location")
+	logging.debug("Running simulation...")
+	logging.debug("Prepating simulation outputs and summaries")
+	logging.debug("Output simulation summaries and save output artifacts")
+	logging.info("Simulation completed successfully!")

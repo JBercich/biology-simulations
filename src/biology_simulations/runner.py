@@ -6,6 +6,7 @@ import logging
 from typing import Any
 
 from biology_simulations.logger import setup_logging
+from biology_simulations.epidemiology.seir import run_seir_simulation
 
 
 class SetWidthHelpFormatter(argparse.HelpFormatter):
@@ -117,7 +118,7 @@ seir_parser.add_argument(
 	type=float,
 	nargs=4,
 	action="append",
-	default=(1.0, 1.0, 1.0, 1.0),
+	default=[[1.0, 1.0, 1.0, 1.0]],
 	metavar=("NUM_INFECTED", "INFECTION_RATE", "VIRULENCE_RATE", "RECOVERY_RATE"),
 )
 
@@ -139,6 +140,18 @@ def main() -> None:
 	# for the simulation to be run.
 	if args.simulation == "seir":
 		logging.info("Launching seir simulation...")
+		if len(args.infection) > 1:
+			args.infection.pop(0)
+		run_seir_simulation(
+			args.birth_rate,
+			args.death_rate,
+			args.max_population,
+			args.num_days,
+			args.time_step,
+			args.num_susceptible,
+			args.num_recovered,
+			args.infection if isinstance(args.infection, list) else [args.infection],
+		)
 	else:
 		raise ValueError(f"Invalid simulation type provided: '{args.simulation}'.")
 
